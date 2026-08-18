@@ -1,0 +1,378 @@
+:root {
+  color-scheme: light;
+  --ink: #202826;
+  --muted: #64706c;
+  --line: #dce4df;
+  --paper: #f6f1e8;
+  --panel: #ffffff;
+  --forest: #1f4f43;
+  --leaf: #5d8f54;
+  --honey: #c28c28;
+  --berry: #a9445b;
+  --mist: #e8f4f1;
+  --shadow: 0 18px 38px rgba(32, 40, 38, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+  line-height: 1.58;
+}
+
+a {
+  color: inherit;
+}
+
+.hero {
+  min-height: 330px;
+  display: flex;
+  align-items: end;
+  padding: 20px 18px 42px;
+  background:
+    linear-gradient(180deg, rgba(13, 26, 20, 0.05), rgba(13, 26, 20, 0.76)),
+    url("https://commons.wikimedia.org/wiki/Special:FilePath/Gukeng_Green_Tunnel.jpg?width=1800") center 42% / cover;
+}
+
+.hero__copy {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 850px;
+  margin-bottom: 8px;
+  font-size: clamp(2.25rem, 5.2vw, 4.8rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.hero__dates {
+  margin-bottom: 0;
+  font-size: 1.05rem;
+}
+
+main {
+  width: min(1080px, calc(100% - 28px));
+  margin: -24px auto 38px;
+}
+
+.top-grid,
+.quick-panel,
+.note-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.top-grid {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+}
+
+.quick-panel {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.countdown-panel,
+.weather-panel,
+.quick-action,
+.itinerary,
+.notes {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.countdown-panel,
+.weather-panel,
+.itinerary,
+.notes {
+  padding: 18px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 1.18rem;
+}
+
+.section-head span,
+.quick-action__label,
+.sub-link,
+.fine-print,
+.weather-card__date,
+.weather-card__rain,
+.note-card span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.countdown {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.countdown__unit {
+  min-height: 96px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 1px solid #ecd8a6;
+  border-radius: 8px;
+  background: #fff8e7;
+}
+
+.countdown__unit strong {
+  color: var(--honey);
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  line-height: 1;
+}
+
+.countdown__unit span {
+  margin-top: 6px;
+  color: #7b5a19;
+  font-weight: 900;
+}
+
+.fine-print {
+  margin: 12px 0 0;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.weather-card {
+  min-height: 124px;
+  display: grid;
+  gap: 5px;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #f9fcfb;
+}
+
+.weather-card__main {
+  color: var(--forest);
+  font-size: 1.58rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.weather-card__desc {
+  font-weight: 850;
+}
+
+.weather-card--loading {
+  grid-column: 1 / -1;
+  min-height: 72px;
+  color: var(--muted);
+}
+
+.sub-link {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  margin-top: 10px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.quick-action {
+  display: grid;
+  gap: 2px;
+  min-height: 86px;
+  align-content: center;
+  padding: 14px;
+  text-decoration: none;
+}
+
+.quick-action__value {
+  color: var(--forest);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.itinerary,
+.notes {
+  margin-top: 12px;
+}
+
+.timeline {
+  display: grid;
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.timeline time {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #fff2cc;
+  color: #74510f;
+  font-weight: 900;
+}
+
+.timeline div {
+  display: grid;
+  gap: 3px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.timeline li:last-child div {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.timeline strong {
+  color: var(--berry);
+  font-size: 1.06rem;
+}
+
+.timeline span {
+  color: #3d4744;
+}
+
+.note-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.note-card {
+  display: grid;
+  gap: 6px;
+  min-height: 118px;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--mist);
+}
+
+.note-card strong {
+  color: var(--forest);
+}
+
+footer {
+  padding: 16px 4px 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+a:focus-visible {
+  outline: 3px solid rgba(93, 143, 84, 0.34);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .top-grid,
+  .quick-panel,
+  .note-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .weather-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 250px;
+    padding: 16px 14px 34px;
+    background-position: center 34%;
+  }
+
+  main {
+    width: min(100% - 20px, 1080px);
+    margin-top: -18px;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  .hero__dates {
+    font-size: 0.95rem;
+  }
+
+  .top-grid,
+  .quick-panel,
+  .note-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-panel,
+  .weather-panel,
+  .itinerary,
+  .notes {
+    padding: 14px;
+  }
+
+  .section-head {
+    align-items: start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .countdown {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .countdown__unit {
+    min-height: 76px;
+  }
+
+  .countdown__unit strong {
+    font-size: 1.75rem;
+  }
+
+  .timeline li {
+    grid-template-columns: 66px 1fr;
+    gap: 10px;
+  }
+}
