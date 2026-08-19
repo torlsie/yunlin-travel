@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1f4f43">
   <title>9/22 雲林古坑甜點輕旅行一日遊</title>
-  <link rel="stylesheet" href="styles.css?v=20260818">
+  <link rel="stylesheet" href="styles.css?v=20260819">
 </head>
 <body>
   <header class="hero">
@@ -17,11 +17,17 @@
   </header>
 
   <main>
-    <section class="top-grid" aria-label="行程重點">
-      <article class="countdown-panel">
+    <section class="top-grid" aria-label="出遊即時資訊">
+      <article class="trip-mode-panel" aria-label="旅遊當日模式">
         <div class="section-head">
-          <h2>集合倒數</h2>
-          <span>目標 2026/09/22 08:00</span>
+          <h2>旅遊當日模式</h2>
+          <span id="tripModeStatus">行程準備中</span>
+        </div>
+        <div class="next-stop" aria-live="polite">
+          <span class="next-stop__label" id="nextStopLabel">下一站</span>
+          <strong id="nextStopName">集合出發</strong>
+          <span id="nextStopTime">08:00 沙鹿童綜合</span>
+          <a class="nav-button nav-button--primary" id="nextStopNav" href="https://maps.google.com/?q=童綜合醫療社團法人童綜合醫院沙鹿院區" target="_blank" rel="noopener">導航前往</a>
         </div>
         <div class="countdown" aria-live="polite">
           <div class="countdown__unit">
@@ -44,12 +50,26 @@
         <p class="fine-print">集合地點：沙鹿童綜合。出發時間可依火車時間彈性調整。</p>
       </article>
 
-      <article class="weather-panel" aria-label="雲林近三日天氣預報">
+      <article class="weather-panel" aria-label="今日出遊天氣">
         <div class="section-head">
-          <h2>雲林近三日天氣</h2>
+          <h2>今日出遊天氣</h2>
           <span id="weatherStatus">讀取中</span>
         </div>
-        <div class="weather-grid" id="weatherGrid" aria-live="polite">
+        <div class="current-weather" id="currentWeather" aria-live="polite">
+          <div class="weather-metric">
+            <span>☀️ 氣溫</span>
+            <strong id="currentTemp">--°C</strong>
+          </div>
+          <div class="weather-metric">
+            <span>🌧️ 降雨</span>
+            <strong id="currentRain">--%</strong>
+          </div>
+          <div class="weather-metric">
+            <span>💧 濕度</span>
+            <strong id="currentHumidity">--%</strong>
+          </div>
+        </div>
+        <div class="weather-grid weather-grid--compact" id="weatherGrid" aria-live="polite">
           <div class="weather-card weather-card--loading">正在讀取古坑天氣預報...</div>
         </div>
         <a class="sub-link" href="https://www.cwa.gov.tw/V8/C/W/County/County.html?CID=10009" target="_blank" rel="noopener">中央氣象署雲林縣預報</a>
@@ -59,42 +79,51 @@
     <section class="itinerary" aria-label="一日遊行程">
       <div class="section-head">
         <h2>9/22 行程表</h2>
-        <span>輕鬆走、好拍照、甜點收尾</span>
+        <span>每站可直接導航</span>
       </div>
       <ol class="timeline">
-        <li>
+        <li class="timeline-stop">
           <time>08:00</time>
           <div>
             <strong>集合出發</strong>
             <span>沙鹿童綜合集合，08:00 - 08:30 出發。可視火車時間彈性異動。</span>
+            <a class="nav-button" href="https://maps.google.com/?q=童綜合醫療社團法人童綜合醫院沙鹿院區" target="_blank" rel="noopener">導航</a>
           </div>
         </li>
-        <li>
+        <li class="drive-leg"><span>車程</span><strong>沙鹿 → 古坑綠色隧道　約 60 分鐘</strong></li>
+        <li class="timeline-stop">
           <time>09:30</time>
           <div>
             <strong>古坑綠色隧道</strong>
             <span>綠意步道漫步、享受大自然，也可以逛逛綠蔭市集。</span>
+            <a class="nav-button" href="https://maps.google.com/?q=古坑綠色隧道" target="_blank" rel="noopener">導航</a>
           </div>
         </li>
-        <li>
+        <li class="drive-leg"><span>車程</span><strong>古坑綠色隧道 → 桂林映象會館　約 15 分鐘</strong></li>
+        <li class="timeline-stop">
           <time>11:00</time>
           <div>
             <strong>午餐：桂林映象會館</strong>
             <span>享用南洋風情園區景觀餐，留一點時間拍照、散步、放鬆。</span>
+            <a class="nav-button" href="https://maps.google.com/?q=桂林映象會館" target="_blank" rel="noopener">導航</a>
           </div>
         </li>
-        <li>
+        <li class="drive-leg"><span>車程</span><strong>桂林映象會館 → 塔吉特千層蛋糕大使館　約 35 分鐘</strong></li>
+        <li class="timeline-stop">
           <time>14:00</time>
           <div>
             <strong>塔吉特千層蛋糕大使館</strong>
             <span>觀光工廠導覽、甜點 DIY 或下午茶，順手補滿美味伴手禮。</span>
+            <a class="nav-button" href="https://maps.google.com/?q=塔吉特千層蛋糕大使館" target="_blank" rel="noopener">導航</a>
           </div>
         </li>
-        <li>
+        <li class="drive-leg"><span>車程</span><strong>塔吉特千層蛋糕大使館 → 沙鹿　約 75 分鐘</strong></li>
+        <li class="timeline-stop">
           <time>16:00</time>
           <div>
             <strong>啟程返家</strong>
             <span>滿載而歸，預計 17:15 左右返抵沙鹿。</span>
+            <a class="nav-button" href="https://maps.google.com/?q=沙鹿" target="_blank" rel="noopener">返程導航</a>
           </div>
         </li>
       </ol>
@@ -151,6 +180,6 @@
     </footer>
   </main>
 
-  <script src="app.js?v=20260818"></script>
+  <script src="app.js?v=20260819"></script>
 </body>
 </html>
