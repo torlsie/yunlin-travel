@@ -291,6 +291,42 @@ main {
   font-weight: 760;
 }
 
+.delay-control {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.delay-control > span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.delay-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.delay-option {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbfa;
+  color: var(--forest);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.delay-option.is-active {
+  border-color: var(--forest);
+  background: var(--forest);
+  color: #fff;
+}
+
 .nav-button {
   width: fit-content;
   min-height: 38px;
@@ -504,5 +540,9 @@ a:focus-visible {
 
   .next-stop strong {
     font-size: 1.42rem;
+  }
+
+  .delay-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
