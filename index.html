@@ -26,8 +26,18 @@
         <div class="next-stop" aria-live="polite">
           <span class="next-stop__label" id="nextStopLabel">下一站</span>
           <strong id="nextStopName">集合出發</strong>
-          <span id="nextStopTime">08:00 沙鹿童綜合</span>
+          <span id="nextStopTime">原訂 08:00</span>
+          <span id="nextStopEta">預計 08:00 集合</span>
           <a class="nav-button nav-button--primary" id="nextStopNav" href="https://maps.google.com/?q=童綜合醫療社團法人童綜合醫院沙鹿院區" target="_blank" rel="noopener">導航前往</a>
+        </div>
+        <div class="delay-control" aria-label="行程延誤模式">
+          <span>⏱ 行程延誤</span>
+          <div class="delay-options" role="group" aria-label="選擇延誤時間">
+            <button class="delay-option is-active" type="button" data-delay="0">準時</button>
+            <button class="delay-option" type="button" data-delay="15">+15 分</button>
+            <button class="delay-option" type="button" data-delay="30">+30 分</button>
+            <button class="delay-option" type="button" data-delay="60">+60 分</button>
+          </div>
         </div>
         <div class="countdown" aria-live="polite">
           <div class="countdown__unit">
