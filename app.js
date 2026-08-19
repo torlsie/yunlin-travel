@@ -7,7 +7,9 @@ const tripModeStatus = document.querySelector("#tripModeStatus");
 const nextStopLabel = document.querySelector("#nextStopLabel");
 const nextStopName = document.querySelector("#nextStopName");
 const nextStopTime = document.querySelector("#nextStopTime");
+const nextStopEta = document.querySelector("#nextStopEta");
 const nextStopNav = document.querySelector("#nextStopNav");
+const delayOptions = document.querySelectorAll(".delay-option");
 const countdownNodes = {
   days: document.querySelector("#daysLeft"),
   hours: document.querySelector("#hoursLeft"),
@@ -19,7 +21,8 @@ const tripStops = [
   {
     name: "集合出發",
     label: "第一步",
-    time: "9/22 08:00 集合",
+    scheduledLabel: "原訂 08:00",
+    etaLabel: "集合",
     start: "2026-09-22T08:00:00+08:00",
     end: "2026-09-22T08:30:00+08:00",
     nav: "https://maps.google.com/?q=童綜合醫療社團法人童綜合醫院沙鹿院區"
@@ -27,36 +30,46 @@ const tripStops = [
   {
     name: "古坑綠色隧道",
     label: "下一站",
-    time: "09:30 抵達，綠意步道漫步",
+    scheduledLabel: "原訂 09:30",
+    etaLabel: "抵達，綠意步道漫步",
     start: "2026-09-22T08:30:00+08:00",
+    arrival: "2026-09-22T09:30:00+08:00",
     end: "2026-09-22T10:40:00+08:00",
     nav: "https://maps.google.com/?q=古坑綠色隧道"
   },
   {
     name: "桂林映象會館",
     label: "下一站",
-    time: "11:00 午餐",
+    scheduledLabel: "原訂 11:00",
+    etaLabel: "午餐",
     start: "2026-09-22T10:40:00+08:00",
+    arrival: "2026-09-22T11:00:00+08:00",
     end: "2026-09-22T13:30:00+08:00",
     nav: "https://maps.google.com/?q=桂林映象會館"
   },
   {
     name: "塔吉特千層蛋糕大使館",
     label: "下一站",
-    time: "14:00 甜點 DIY / 下午茶",
+    scheduledLabel: "原訂 14:00",
+    etaLabel: "甜點 DIY / 下午茶",
     start: "2026-09-22T13:30:00+08:00",
+    arrival: "2026-09-22T14:00:00+08:00",
     end: "2026-09-22T16:00:00+08:00",
     nav: "https://maps.google.com/?q=塔吉特千層蛋糕大使館"
   },
   {
     name: "啟程返家",
     label: "下一步",
-    time: "16:00 出發，約 17:15 返抵沙鹿",
+    scheduledLabel: "原訂 16:00",
+    etaLabel: "出發，約 17:15 返抵沙鹿",
     start: "2026-09-22T16:00:00+08:00",
+    arrival: "2026-09-22T16:00:00+08:00",
     end: "2026-09-22T17:15:00+08:00",
     nav: "https://maps.google.com/?q=沙鹿"
   }
 ];
+
+let tripDelayMinutes = Number(localStorage.getItem("yunlinTripDelayMinutes") || 0);
 
 const weatherLabels = new Map([
   [0, "晴朗"],
@@ -210,11 +223,38 @@ function setupGatheringCountdown() {
 }
 
 function setupTripMode() {
-  const tripStart = new Date(tripStops[0].start);
-  const tripEnd = new Date(tripStops[tripStops.length - 1].end);
+  const delayMs = () => tripDelayMinutes * 60 * 1000;
+
+  function getDelayedDate(value) {
+    return new Date(new Date(value).getTime() + delayMs());
+  }
+
+  function formatTime(date) {
+    return new Intl.DateTimeFormat("zh-TW", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(date);
+  }
+
+  function getEtaText(stop) {
+    const baseTime = stop.arrival || stop.start;
+    const etaTime = formatTime(getDelayedDate(baseTime));
+    return `預計 ${etaTime} ${stop.etaLabel}`;
+  }
+
+  function updateDelayButtons() {
+    delayOptions.forEach((button) => {
+      const selected = Number(button.dataset.delay) === tripDelayMinutes;
+      button.classList.toggle("is-active", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+  }
 
   function renderTripMode() {
     const now = new Date();
+    const tripStart = getDelayedDate(tripStops[0].start);
+    const tripEnd = getDelayedDate(tripStops[tripStops.length - 1].end);
     let activeStop = tripStops[0];
     let status = "行程準備中";
 
@@ -227,21 +267,33 @@ function setupTripMode() {
       activeStop = {
         ...activeStop,
         label: "今日完成",
-        time: "已返程，記得帶齊伴手禮"
+        scheduledLabel: "行程完成",
+        etaLabel: "已返程，記得帶齊伴手禮"
       };
     } else {
-      activeStop = tripStops.find((stop) => now < new Date(stop.end)) || tripStops[tripStops.length - 1];
+      activeStop = tripStops.find((stop) => now < getDelayedDate(stop.end)) || tripStops[tripStops.length - 1];
       status = "旅途中";
     }
 
-    tripModeStatus.textContent = status;
+    tripModeStatus.textContent = tripDelayMinutes > 0 ? `${status}，延誤 +${tripDelayMinutes} 分` : status;
     nextStopLabel.textContent = activeStop.label;
     nextStopName.textContent = activeStop.name;
-    nextStopTime.textContent = activeStop.time;
+    nextStopTime.textContent = activeStop.scheduledLabel;
+    nextStopEta.textContent = activeStop.scheduledLabel === "行程完成" ? activeStop.etaLabel : getEtaText(activeStop);
     nextStopNav.href = activeStop.nav;
     nextStopNav.textContent = activeStop.name === "啟程返家" ? "開始導航" : "導航前往";
   }
 
+  delayOptions.forEach((button) => {
+    button.addEventListener("click", () => {
+      tripDelayMinutes = Number(button.dataset.delay);
+      localStorage.setItem("yunlinTripDelayMinutes", String(tripDelayMinutes));
+      updateDelayButtons();
+      renderTripMode();
+    });
+  });
+
+  updateDelayButtons();
   renderTripMode();
   setInterval(renderTripMode, 60000);
 }
