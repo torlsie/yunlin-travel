@@ -1,11 +1,62 @@
 const weatherGrid = document.querySelector("#weatherGrid");
 const weatherStatus = document.querySelector("#weatherStatus");
+const currentTemp = document.querySelector("#currentTemp");
+const currentRain = document.querySelector("#currentRain");
+const currentHumidity = document.querySelector("#currentHumidity");
+const tripModeStatus = document.querySelector("#tripModeStatus");
+const nextStopLabel = document.querySelector("#nextStopLabel");
+const nextStopName = document.querySelector("#nextStopName");
+const nextStopTime = document.querySelector("#nextStopTime");
+const nextStopNav = document.querySelector("#nextStopNav");
 const countdownNodes = {
   days: document.querySelector("#daysLeft"),
   hours: document.querySelector("#hoursLeft"),
   minutes: document.querySelector("#minutesLeft"),
   seconds: document.querySelector("#secondsLeft")
 };
+
+const tripStops = [
+  {
+    name: "集合出發",
+    label: "第一步",
+    time: "9/22 08:00 集合",
+    start: "2026-09-22T08:00:00+08:00",
+    end: "2026-09-22T08:30:00+08:00",
+    nav: "https://maps.google.com/?q=童綜合醫療社團法人童綜合醫院沙鹿院區"
+  },
+  {
+    name: "古坑綠色隧道",
+    label: "下一站",
+    time: "09:30 抵達，綠意步道漫步",
+    start: "2026-09-22T08:30:00+08:00",
+    end: "2026-09-22T10:40:00+08:00",
+    nav: "https://maps.google.com/?q=古坑綠色隧道"
+  },
+  {
+    name: "桂林映象會館",
+    label: "下一站",
+    time: "11:00 午餐",
+    start: "2026-09-22T10:40:00+08:00",
+    end: "2026-09-22T13:30:00+08:00",
+    nav: "https://maps.google.com/?q=桂林映象會館"
+  },
+  {
+    name: "塔吉特千層蛋糕大使館",
+    label: "下一站",
+    time: "14:00 甜點 DIY / 下午茶",
+    start: "2026-09-22T13:30:00+08:00",
+    end: "2026-09-22T16:00:00+08:00",
+    nav: "https://maps.google.com/?q=塔吉特千層蛋糕大使館"
+  },
+  {
+    name: "啟程返家",
+    label: "下一步",
+    time: "16:00 出發，約 17:15 返抵沙鹿",
+    start: "2026-09-22T16:00:00+08:00",
+    end: "2026-09-22T17:15:00+08:00",
+    nav: "https://maps.google.com/?q=沙鹿"
+  }
+];
 
 const weatherLabels = new Map([
   [0, "晴朗"],
@@ -67,10 +118,16 @@ async function fetchJsonWithTimeout(url, timeoutMs = 7000) {
 
 function renderWeather(data) {
   const daily = data?.daily;
+  const current = data?.current;
 
   if (!daily?.time?.length) {
     throw new Error("weather data unavailable");
   }
+
+  const todayRain = daily.precipitation_probability_max?.[0];
+  currentTemp.textContent = `${Math.round(current?.temperature_2m ?? daily.temperature_2m_max[0])}°C`;
+  currentRain.textContent = `${todayRain ?? "--"}%`;
+  currentHumidity.textContent = `${Math.round(current?.relative_humidity_2m ?? 0) || "--"}%`;
 
   weatherGrid.innerHTML = daily.time.slice(0, 3).map((date, index) => {
     const max = Math.round(daily.temperature_2m_max[index]);
@@ -84,14 +141,12 @@ function renderWeather(data) {
         <span class="weather-card__date">${formatWeatherDate(date)}</span>
         <strong class="weather-card__main">${min}-${max}°C</strong>
         <span class="weather-card__desc">${desc}</span>
-        <span class="weather-card__rain">最高降雨機率 ${rain ?? "--"}%</span>
+        <span class="weather-card__rain">降雨 ${rain ?? "--"}%</span>
       </article>
     `;
   }).join("");
 
-  const first = daily.time[0];
-  const last = daily.time[Math.min(daily.time.length, 3) - 1];
-  weatherStatus.textContent = `${formatWeatherDate(first)} - ${formatWeatherDate(last)} 已更新`;
+  weatherStatus.textContent = `${formatWeatherDate(daily.time[0])} 即時參考`;
 }
 
 async function loadWeather() {
@@ -100,6 +155,7 @@ async function loadWeather() {
     "https://api.open-meteo.com/v1/forecast",
     "?latitude=23.659291",
     "&longitude=120.54098",
+    "&current=temperature_2m,relative_humidity_2m,weather_code",
     "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
     "&timezone=Asia%2FTaipei",
     "&forecast_days=3",
@@ -112,6 +168,9 @@ async function loadWeather() {
   } catch (error) {
     console.warn("weather failed", error);
     weatherStatus.textContent = "暫時無法讀取";
+    currentTemp.textContent = "--°C";
+    currentRain.textContent = "--%";
+    currentHumidity.textContent = "--%";
     weatherGrid.innerHTML = `
       <a class="weather-card weather-card--loading" href="https://www.cwa.gov.tw/V8/C/W/County/County.html?CID=10009" target="_blank" rel="noopener">
         天氣資料暫時無法載入，請點此查看中央氣象署雲林縣預報。
@@ -120,7 +179,7 @@ async function loadWeather() {
   }
 }
 
-function setupCountdown() {
+function setupGatheringCountdown() {
   const target = new Date("2026-09-22T08:00:00+08:00").getTime();
 
   function renderCountdown() {
@@ -150,5 +209,43 @@ function setupCountdown() {
   setInterval(renderCountdown, 1000);
 }
 
-setupCountdown();
+function setupTripMode() {
+  const tripStart = new Date(tripStops[0].start);
+  const tripEnd = new Date(tripStops[tripStops.length - 1].end);
+
+  function renderTripMode() {
+    const now = new Date();
+    let activeStop = tripStops[0];
+    let status = "行程準備中";
+
+    if (now < tripStart) {
+      activeStop = tripStops[0];
+      status = "尚未出發";
+    } else if (now > tripEnd) {
+      activeStop = tripStops[tripStops.length - 1];
+      status = "行程已完成";
+      activeStop = {
+        ...activeStop,
+        label: "今日完成",
+        time: "已返程，記得帶齊伴手禮"
+      };
+    } else {
+      activeStop = tripStops.find((stop) => now < new Date(stop.end)) || tripStops[tripStops.length - 1];
+      status = "旅途中";
+    }
+
+    tripModeStatus.textContent = status;
+    nextStopLabel.textContent = activeStop.label;
+    nextStopName.textContent = activeStop.name;
+    nextStopTime.textContent = activeStop.time;
+    nextStopNav.href = activeStop.nav;
+    nextStopNav.textContent = activeStop.name === "啟程返家" ? "開始導航" : "導航前往";
+  }
+
+  renderTripMode();
+  setInterval(renderTripMode, 60000);
+}
+
+setupGatheringCountdown();
+setupTripMode();
 loadWeather();
